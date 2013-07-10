@@ -1,9 +1,3 @@
-try:
-    from sys import intern
-except ImportError:
-    # In this case, the user must be using python2, where intern() is a builtin
-    pass
-
 _immutable_str = intern("__immutable__")
 
 def immutable(cls):

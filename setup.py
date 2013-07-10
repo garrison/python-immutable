@@ -48,5 +48,6 @@ setup(
     ],
     packages=['immutable'],
     tests_require=['pytest'],
-    cmdclass = {'test': PyTest},
+    cmdclass={'test': PyTest},
+    use_2to3=True,
 )
