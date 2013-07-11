@@ -47,7 +47,7 @@ setup(
         'Topic :: Software Development :: Libraries :: Python Modules',
     ],
     packages=['immutable'],
-    tests_require=['pytest'],
+    tests_require=['pytest', 'six'],
     cmdclass={'test': PyTest},
     use_2to3=True,
 )

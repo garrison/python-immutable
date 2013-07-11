@@ -1,10 +1,9 @@
 from pytest import raises
 
-from immutable import immutable
+from immutable import immutable_object, immutable_type
 
 def test_basic():
-    @immutable
-    class Something(object):
+    class Something(immutable_object):
         def __init__(self):
             self.x = 3
 
@@ -18,25 +17,15 @@ def test_basic():
         del o.x
 
 def test_empty_class():
-    @immutable
-    class EmptyClass(object):
+    class EmptyClass(immutable_object):
         pass
 
     x = EmptyClass()
     with raises(TypeError):
         del x.x
 
-def test_old_style_class():
-    from sys import version_info
-    if version_info[0] == 2:
-        with raises(TypeError):
-            @immutable
-            class OldStyle:
-                pass
-
 def test_slots():
-    @immutable
-    class SlottedImmutable(object):
+    class SlottedImmutable(immutable_object):
         __slots__ = ("__immutable__", "slot1")
 
         def __init__(self):
@@ -47,12 +36,10 @@ def test_slots():
         x.slot1 = 4
 
 def test_inheritance():
-    @immutable
-    class BaseClass(object):
+    class BaseClass(immutable_object):
         def __init__(self, x):
             self.x = x
 
-    @immutable
     class ChildClass(BaseClass):
         def __init__(self, x, y, z):
             self.y = y
@@ -67,17 +54,25 @@ def test_inheritance():
     with raises(TypeError):
         o.z = 10
 
-def test_undecorated_inheritance():
-    @immutable
-    class BaseClass(object):
-        def __init__(self, x):
-            self.x = x
+def test_six_metaclass():
+    from six import with_metaclass
 
-    @immutable # fixme: remove this line and get it to work in a sane way
-    class ChildClass(BaseClass):
-        def __init__(self, x, y, z):
-            self.y = y
-            super(ChildClass, self).__init__(x)
-            self.z = z
+    class Something(with_metaclass(immutable_type)):
+        pass
 
-    o = ChildClass(1, 2, 3)
+    o = Something()
+    with raises(TypeError):
+        o.x = 20
+
+def test_six_custom_metaclass():
+    from six import with_metaclass
+
+    class CustomMetaclass(immutable_type):
+        pass
+
+    class Something(with_metaclass(CustomMetaclass)):
+        pass
+
+    o = Something()
+    with raises(TypeError):
+        o.x = 20
