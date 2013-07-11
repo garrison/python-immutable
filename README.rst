@@ -11,6 +11,8 @@ Rationale
 Usage
 -----
 
+::
+
     from immutable import immutable_object
 
     class MyClass(immutable_object):
